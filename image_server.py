@@ -1,23 +1,22 @@
 import os
-from datetime import datetime
-from gevent.pywsgi import WSGIServer
-
-from bson.json_util import dumps
-from flask import Flask, jsonify
-from keras.applications.mobilenet_v2 import MobileNetV2
-from keras.preprocessing.image import img_to_array
-from keras.applications.mobilenet_v2 import preprocess_input, decode_predictions
-from PIL import Image
 import pymongo
-
 import random
 import flask
 import numpy as np
 import settings
 import io
 
-app = Flask(__name__)
+from datetime import datetime
+from bson.json_util import dumps
+from flask import Flask
+from keras.applications.mobilenet_v2 import MobileNetV2
+from keras.preprocessing.image import img_to_array
+from keras.applications.mobilenet_v2 import preprocess_input, decode_predictions
+from PIL import Image
+from flask_restplus import Api
 
+app = Flask(__name__)
+doc_api = Api(app)
 
 def image_preprocessing(image, target_size):
     img = image.resize(target_size)
@@ -27,6 +26,7 @@ def image_preprocessing(image, target_size):
     return img
 
 
+# creat a unique name for image that will be stored
 def create_uuid():
     now_time = datetime.now().strftime("%Y%m%d%H%M%S")
     random_num = random.randint(0, 1000)
@@ -41,6 +41,7 @@ db = client["image_classification"]
 collection = db["results"]
 
 
+# tester
 @app.route('/')
 def hello_world():
     return "welcome to image prediction demo!"
@@ -67,14 +68,15 @@ def predict():
             feature = model.predict(image)
             result = decode_predictions(feature, top=settings.NUM_OF_PREDICTION)[0]
 
-            image = {
-                'image_url': file_name,
-                'prediction_result': str(result)
+            value = {
+                "image_url": str(file_name),
+                "prediction_result": str(result)
             }
-            collection.insert_one(image)
-            return jsonify(str(result))
+            collection.insert_one(value)
+            return dumps(value)
 
 
+# return all prediction history in the mongoDB
 @app.route('/history')
 def history():
     results = collection.find()
@@ -83,7 +85,6 @@ def history():
 
 if __name__ == '__main__':
     app.run()
-    # server = WSGIServer(('0.0.0.0', 7770), app)
-    # server.serve_forever()
+
 # curl -k -X POST -F "image=@Cat_07464.jpg" "http://localhost:5000/predict"
-# gunicorn -c gun_config.py image_server:Flask
+# gunicorn -c gun_config.py image_server:app

@@ -1,12 +1,12 @@
-import os
 import gevent.monkey
-gevent.monkey.patch_all()
 import multiprocessing
 
-# 服务地址（adderes:port）
+gevent.monkey.patch_all()
+
+# address binding（address:port）
 bind = "0.0.0.0:80"
 
-# 启动进程数量
+# number of processor
 workers = multiprocessing.cpu_count() * 2 + 1
 worker_class = 'gevent'
 threads = 20

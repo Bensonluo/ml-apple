@@ -12,7 +12,6 @@ info:
 host: "localhost"
 
 
-
 schemes:
 - "https"
 - "http"
@@ -24,35 +23,31 @@ paths:
       - "image"
       summary: "predict a image "
       description: ""
-      operationId: "addPet"
       consumes:
       - "application/json"
-      - "application/xml"
       produces:
-      - "application/xml"
       - "application/json"
       parameters:
       - in: "body"
         name: "body"
-        description: "Pet object that needs to be added to the store"
+        description: "image that needs to be predicted"
         required: true
         schema:
-          $ref: "#/definitions/Pet"
+          type: "object"
       responses:
         "405":
           description: "Invalid input"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
+        "200":
+          description: "success"
+          schema:
+            $ref: "#/definitions/result"
 
   /history:
     get:
       tags:
       - "image"
-      summary: "Returns pet inventories by status"
-      description: "Returns a map of status codes to quantities"
-      operationId: "getInventory"
+      summary: "Returns all prediction result"
+      description: "Returns all prediction result"
       produces:
       - "application/json"
       parameters: []
@@ -60,133 +55,46 @@ paths:
         "200":
           description: "successful operation"
           schema:
-            type: "object"
-            additionalProperties:
-              type: "integer"
-              format: "int32"
-  
-securityDefinitions:
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
-    flow: "implicit"
-    scopes:
-      write:pets: "modify pets in your account"
-      read:pets: "read your pets"
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
-definitions:
-  Order:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      petId:
-        type: "integer"
-        format: "int64"
-      quantity:
-        type: "integer"
-        format: "int32"
-      shipDate:
-        type: "string"
-        format: "date-time"
-      status:
-        type: "string"
-        description: "Order Status"
-        enum:
-        - "placed"
-        - "approved"
-        - "delivered"
-      complete:
-        type: "boolean"
-        default: false
-    xml:
-      name: "Order"
-  Category:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      name:
-        type: "string"
-    xml:
-      name: "Category"
-  User:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      username:
-        type: "string"
-      firstName:
-        type: "string"
-      lastName:
-        type: "string"
-      email:
-        type: "string"
-      password:
-        type: "string"
-      phone:
-        type: "string"
-      userStatus:
-        type: "integer"
-        format: "int32"
-        description: "User Status"
-    xml:
-      name: "User"
+            type: "array"
+            items:
+              $ref: "#/definitions/result_with_id"
 
-  Pet:
+
+definitions:
+  result_with_id:
     type: "object"
     required:
-    - "name"
-    - "photoUrls"
+    - "image_url"
+    - "prediction_result"
     properties:
-      id:
-        type: "integer"
-        format: "int64"
-      category:
-        $ref: "#/definitions/Category"
-      name:
+      _id:
+        type: "object"
+        properties:
+          Oid:
+            type: "string"
+            example: "5f2612b8bfe3763181e4e3d9"
+      image_url:
         type: "string"
-        example: "doggie"
-      photoUrls:
-        type: "array"
-        xml:
-          name: "photoUrl"
-          wrapped: true
-        items:
-          type: "string"
-      tags:
-        type: "array"
-        xml:
-          name: "tag"
-          wrapped: true
-        items:
-          $ref: "#/definitions/Tag"
-      status:
+        example: "20200802091119124Cat_07464.jpg"
+      prediction_result:
         type: "string"
-        description: "pet status in the store"
-        enum:
-        - "available"
-        - "pending"
-        - "sold"
-    xml:
-      name: "Pet"
-  ApiResponse:
+        example: "[('n02123159', 'tiger_cat', 0.37779337), ('n02127052', 'lynx', 0.33435658), ('n02123045', 'tabby', 0.08329431), ('n02123394', 'Persian_cat', 0.02986822), ('n02129165', 'lion', 0.0023677386)]"
+
+
+  result:
     type: "object"
+    required:
+    - "image_url"
+    - "prediction_result"
     properties:
-      code:
-        type: "integer"
-        format: "int32"
-      type:
+      image_url:
         type: "string"
-      message:
+        example: "20200802091119124Cat_07464.jpg"
+      prediction_result:
         type: "string"
+        example: "[('n02123159', 'tiger_cat', 0.37779337), ('n02127052', 'lynx', 0.33435658), ('n02123045', 'tabby', 0.08329431), ('n02123394', 'Persian_cat', 0.02986822), ('n02129165', 'lion', 0.0023677386)]"
+
+
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
