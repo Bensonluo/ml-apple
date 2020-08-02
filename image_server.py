@@ -13,10 +13,9 @@ from keras.applications.mobilenet_v2 import MobileNetV2
 from keras.preprocessing.image import img_to_array
 from keras.applications.mobilenet_v2 import preprocess_input, decode_predictions
 from PIL import Image
-from flask_restplus import Api
 
 app = Flask(__name__)
-doc_api = Api(app)
+
 
 def image_preprocessing(image, target_size):
     img = image.resize(target_size)
