@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="external nofollow" >
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.4.0/jquery.js"></script>
+
+<html lang="en">
+    <header>
+        <meta charset="utf-8">
+        <H1>welcome to image prediction demo!</H1>
+    </header>
+    <body>
+    <table class="table table-bordered" id='tabletest'>
+ <tr>
+  <th>image</th>
+  <th>prediction results</th>
+
+ </tr>
+ </table>
+    <a></a>
+    <script type="text/javascript">
+    window.onload = $(function(){
+        $.ajax({
+            url:'history',
+            type:'get',
+            dataType:'json',
+            success:function(data){
+                for(i in data) {
+                    let tr;
+                    tr='<td><img src="../static/photo/' + data[i].image_url +
+                        '" alt="' + data[i].image_url + '" width="150px" height="150px"></td>'+
+                        '<td>'+data[i].prediction_result+'' + '</td>'
+                    $("#tabletest").append('<tr>'+tr+'</tr>')
+                }
+            }
+        })
+    })
+    </script>
+    </body>
+</html>

@@ -6,9 +6,10 @@ import numpy as np
 import settings
 import io
 
+from werkzeug.http import HTTP_STATUS_CODES
 from datetime import datetime
 from bson.json_util import dumps
-from flask import Flask
+from flask import Flask, render_template, jsonify
 from keras.applications.mobilenet_v2 import MobileNetV2
 from keras.preprocessing.image import img_to_array
 from keras.applications.mobilenet_v2 import preprocess_input, decode_predictions
@@ -33,6 +34,14 @@ def create_uuid():
     return unique_id
 
 
+def api_abort(code, message=None, **kwargs):
+    if message is None:
+        message = HTTP_STATUS_CODES.get(code, '')
+
+    response = jsonify(message=message, **kwargs)
+    return response, code
+
+
 # connect mongoDB
 client = pymongo.MongoClient(host=settings.MONGODB_HOST,
                              port=settings.MONGODB_PORT)
@@ -42,8 +51,8 @@ collection = db["results"]
 
 # tester
 @app.route('/')
-def hello_world():
-    return "welcome to image prediction demo!"
+def web_application():
+    return render_template("index.html")
 
 
 @app.route('/predict', methods=["POST"])
@@ -57,10 +66,10 @@ def predict():
             path = basedir + "/static/photo/"
             file_name = create_uuid() + img.filename
             file_path = path + file_name
-            image = img.read()
-            img.save(file_path)
 
+            image = img.read()
             image = Image.open(io.BytesIO(image))
+            image.save(file_path)
             image = image_preprocessing(image,
                                         (settings.IMAGE_WIDTH,
                                          settings.IMAGE_HEIGHT))
@@ -72,7 +81,10 @@ def predict():
                 "prediction_result": str(result)
             }
             collection.insert_one(value)
+            print(dumps(value))
             return dumps(value)
+        return api_abort(400)
+    return api_abort(400)
 
 
 # return all prediction history in the mongoDB
@@ -84,6 +96,3 @@ def history():
 
 if __name__ == '__main__':
     app.run()
-
-# curl -k -X POST -F "image=@Cat_07464.jpg" "http://localhost:5000/predict"
-# gunicorn -c gun_config.py image_server:app
