@@ -1,15 +1,23 @@
 # ml-apple
 *This is a simple image classifiation server*
+
 Sorry for the unshaped solution due to time limitation
 
 ### Tech stack
 Backend Language: 	   			Python
+
 Api framework:            			 Flask
+
 Wsgi server:       					   Gunicorn + gevent
+
 Database:                     			MongoDB
+
 API Documentation:   			 swagger
+
 Machine learning model:  	  pretrained MobileNet_v2
+
 Container: docker
+
 Not done yet:  Ngnix
 
 Develope OS env: windows, Linux(with docker)
