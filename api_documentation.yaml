@@ -77,8 +77,9 @@ definitions:
         type: "string"
         example: "20200802091119124Cat_07464.jpg"
       prediction_result:
-        type: "string"
-        example: "[('n02123159', 'tiger_cat', 0.37779337), ('n02127052', 'lynx', 0.33435658), ('n02123045', 'tabby', 0.08329431), ('n02123394', 'Persian_cat', 0.02986822), ('n02129165', 'lion', 0.0023677386)]"
+        type: "array"
+        items:
+          $ref: "#/definitions/res"
 
 
   result:
@@ -91,8 +92,23 @@ definitions:
         type: "string"
         example: "20200802091119124Cat_07464.jpg"
       prediction_result:
+        type: "array"
+        items:
+          $ref: "#/definitions/res"
+
+
+  res:
+    type: "object"
+    properties:
+      class_name:
         type: "string"
-        example: "[('n02123159', 'tiger_cat', 0.37779337), ('n02127052', 'lynx', 0.33435658), ('n02123045', 'tabby', 0.08329431), ('n02123394', 'Persian_cat', 0.02986822), ('n02129165', 'lion', 0.0023677386)]"
+        example: "n02669723"
+      class_description:
+        type: "string"
+        example: "academic_gown"
+      score:
+        type: "string"
+        example: "0.041221227"
 
 
 externalDocs:
