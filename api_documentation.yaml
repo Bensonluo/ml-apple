@@ -35,8 +35,8 @@ paths:
         schema:
           type: "object"
       responses:
-        "405":
-          description: "Invalid input"
+        "400":
+          description: "Bad Request"
         "200":
           description: "success"
           schema:

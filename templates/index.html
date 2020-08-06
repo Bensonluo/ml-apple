@@ -11,8 +11,10 @@
     <body>
     <table class="table table-bordered" id='tabletest'>
  <tr>
-  <th>image</th>
-  <th>prediction results (id, description, score)</th>
+  <th>Image</th>
+  <th>Class ID</th>
+  <th>Class description</th>
+  <th>Score</th>
  </tr>
  </table>
     <a></a>
@@ -23,12 +25,23 @@
             type:'get',
             dataType:'json',
             success:function(data){
-                for(i in data) {
+                for(let i in data) {
+                    let ro = data[i];
                     let tr;
-                    tr='<td><img src="../static/photo/' + data[i].image_url +
-                        '" alt="' + data[i].image_url + '" width="150px" height="150px"></td>'+
-                        '<td>'+data[i].prediction_result+'' + '</td>'
-                    $("#tabletest").append('<tr>'+tr+'</tr>')
+                    let length = ro.prediction_result.length;
+                    tr='<td rowspan="'+ length + '"><img src="../static/photo/' + ro.image_url +
+                        '" alt="' + ro.image_url + '" width="224px" height="200px"></td>'+
+                        '<td>' + ro.prediction_result[0]["class_name"] + '</td>' +
+                        '<td>' + ro.prediction_result[0]["class_description"] + '</td>' +
+                        '<td>' + ro.prediction_result[0]["score"] + '</td>';
+                    $("#tabletest").append('<tr>'+tr+'</tr>');
+                    for(let index=1; index < length; index++ ) {
+                        let tr_no_pic = '<td>' + ro.prediction_result[index]["class_name"] + '</td>' +
+                        '<td>' + ro.prediction_result[index]["class_description"] + '</td>' +
+                        '<td>' + ro.prediction_result[index]["score"] + '</td>';
+                        $("#tabletest").append('<tr>'+tr_no_pic+'</tr>');
+
+                    }
                 }
             }
         })

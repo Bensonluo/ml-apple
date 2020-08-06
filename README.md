@@ -1,26 +1,26 @@
 # ml-apple
-*This is a simple image classifiation server*
+*This is a simple image classification server*
 
 Sorry for the unshaped solution due to time limitation
 
 ### Tech stack
-Backend Language: 	   			Python
+Backend Language: Python
 
-Api framework:            			 Flask
+Api framework:   Flask
 
-Wsgi server:       					   Gunicorn + gevent
+Wsgi server:   Gunicorn + gevent
 
-Database:                     			MongoDB
+Database:    MongoDB
 
-API Documentation:   			 swagger
+API Documentation:  swagger
 
-Machine learning model:  	  pretrained MobileNet_v2
+Machine learning model:  pretrained MobileNet_v2
 
 Container: docker
 
-Not done yet:  Ngnix
+Not done yet:  Nginx
 
-Develope OS env: windows, Linux(with docker)
+Develop OS env: windows, Linux(with docker)
 
 ### Get the server to run on your machine
 It should be easy to download docker from [Download](https://docs.docker.com/docker-for-windows/install/)
@@ -33,8 +33,11 @@ After  build successfully executed,
 ```docker run -d -p 8080:80 name```
 will run the container and bind the 80 port to the local 8080 port.
 
-you can also just run it with flask server then heading to 
+you can also just run it with ```flask run``` then heading to 
 "http://localhost:5000/"
+
+while in that case, you will need to install dependencies manually 
+via ```pip3 install -r requirements.txt```
 
 
 ### MongoDB

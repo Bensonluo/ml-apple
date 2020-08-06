@@ -42,19 +42,34 @@ def api_abort(code, message=None, **kwargs):
     return response, code
 
 
+# convert tuple result to dict
+def tuple_to_dict(results):
+    for index in range(len(results)):
+        res = {
+            "class_name": results[index][0],
+            "class_description": results[index][1],
+            "score": str(results[index][2])
+        }
+        results[index] = res
+
+    return results
+
+
 # connect mongoDB
 client = pymongo.MongoClient(host=settings.MONGODB_HOST,
                              port=settings.MONGODB_PORT)
 db = client["image_classification"]
 collection = db["results"]
+# collection.delete_many({})  # warning: purge database
 
 
-# tester
+# history page
 @app.route('/')
 def web_application():
     return render_template("index.html")
 
 
+# endpoint that predicts received image
 @app.route('/predict', methods=["POST"])
 def predict():
     model = MobileNetV2(weights='imagenet')
@@ -78,10 +93,10 @@ def predict():
 
             value = {
                 "image_url": str(file_name),
-                "prediction_result": str(result)
+                "prediction_result": tuple_to_dict(result)
             }
+
             collection.insert_one(value)
-            print(dumps(value))
             return dumps(value)
         return api_abort(400)
     return api_abort(400)
